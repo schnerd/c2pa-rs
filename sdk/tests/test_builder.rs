@@ -37,3 +37,17 @@ fn test_builder_ca_jpg() -> Result<()> {
 
     compare_stream_to_known_good(&mut dest, format, "CA_test.json")
 }
+
+#[test]
+fn test_builder_empty_mp4() -> Result<()> {
+    let manifest_def = std::fs::read_to_string(fixtures_path("simple_manifest.json"))?;
+    let mut builder = Builder::from_json(&manifest_def)?;
+
+    let source = fixtures_path("empty.mp4");
+    let dest = fixtures_path("empty-signed.mp4");
+
+    // Error: InvalidAsset("Bad BMFF")
+    builder.sign_file(source, dest, &test_signer())?;
+
+    Ok(())
+}
